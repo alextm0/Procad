@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --primary: #1a1a4f;
+  --primary-dark: #0f0f30;
+  --secondary: #c08c3c;
+  --secondary-light: #e0a84c;
+  --accent: #4fb8e0;
+  --background: #ffffff;
+  --foreground: #0f0f30;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0f0f30;
+    --foreground: #f8f8f8;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+.hero-slide {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.service-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.project-card {
+  transition: transform 0.3s ease;
+}
+
+.project-card:hover {
+  transform: scale(1.02);
+}
+
+.section-title {
+  position: relative;
+  display: inline-block;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 0;
+  width: 60px;
+  height: 3px;
+  background-color: var(--secondary);
+}
