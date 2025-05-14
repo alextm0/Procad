@@ -3,7 +3,7 @@ import { Resend } from 'resend';
 import { renderContactEmailHtml, renderCareerEmailHtml } from '../utils/email-templates';
 
 // Initialize Resend client
-const resend = new Resend(process.env.RESEND_API_KEY);
+const resend = new Resend(process.env.RESEND_API_KEY!);
 
 export async function POST(request: NextRequest) {
   try {

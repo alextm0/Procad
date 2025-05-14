@@ -39,9 +39,23 @@ jobs:
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
     runs-on: ubuntu-latest
 
+    env:
+      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
 
       # Deploy directly to Vercel
       - name: Deploy to Vercel
@@ -50,6 +64,10 @@ jobs:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          # Pass build-time environment variables to Vercel
+          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+          EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
+          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }}
         with:
           vercel-args: '--prod'
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
