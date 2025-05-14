@@ -61,7 +61,7 @@ const Header = () => {
     { name: language === "ro" ? "Servicii" : "Services", href: isHomePage ? "#services" : "/#services" },
     { name: language === "ro" ? "Proiecte" : "Projects", href: isHomePage ? "#projects" : "/projects" },
     { name: language === "ro" ? "Despre" : "About", href: isHomePage ? "#about" : "/#about" },
-    { name: language === "ro" ? "Contact" : "Contact", href: isHomePage ? "#contact" : "/contact" },
+    { name: language === "ro" ? "Contact" : "Contact", href: "/contact" },
     { name: language === "ro" ? "Cariera" : "Career", href: "/career" },
   ]
 
