@@ -7,8 +7,8 @@ import { Button } from "@/components/ui/button"
 
 const heroImages = [
   {
-    src: "/hero1.jpeg",
-    alt: "PROCAD surveying equipment in mountain landscape",
+    src: "/hero2.jpeg",
+    alt: "PROCAD surveying equipment",
   },
   {
     src: "/Procad6.jpg",
@@ -19,9 +19,13 @@ const heroImages = [
     alt: "PROCAD field worker with equipment",
   },
   {
-    src: "/Procad10.jpg",
-    alt: "PROCAD topographic survey work",
+    src: "/Procad8.jpg",
+    alt: "PROCAD field worker with equipment",
   },
+  {
+    src: "/Procad7.jpg",
+    alt: "PROCAD field worker with equipment",
+  }
 ]
 
 const heroTitles = {
@@ -125,7 +129,9 @@ const HeroSection = () => {
               sizes="100vw"
               quality={90}
             />
-            <div className="absolute inset-0 bg-black bg-opacity-50" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/50 to-black/70" />
+            <div className="absolute inset-0 backdrop-blur-[2px]" />
+            <div className="absolute inset-0 bg-blue-900/10 mix-blend-multiply" />
           </div>
         ))}
       </div>

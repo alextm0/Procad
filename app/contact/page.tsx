@@ -51,11 +51,24 @@ const ContactPage = () => {
     setFormStatus("submitting")
     
     try {
-      // Simulate API call with a delay
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      // Send the form data to our API endpoint
+      const response = await fetch('/api/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          formType: 'contact',
+          formData: formData
+          // The recipient will be determined by the EMAIL_RECIPIENT environment variable
+        }),
+      })
+
+      const data = await response.json()
       
-      // In a real app, you would send the form data to your backend here
-      console.log(formData)
+      if (!response.ok) {
+        throw new Error(data.error || 'Something went wrong')
+      }
       
       // Success handling
       setFormStatus("success")
@@ -66,6 +79,7 @@ const ContactPage = () => {
       }, 3000)
     } catch (error) {
       // Error handling
+      console.error('Error sending email:', error)
       setFormStatus("error")
       setFormError(language === "ro" ? "A apărut o eroare. Vă rugăm încercați din nou." : "An error occurred. Please try again.")
     }
@@ -289,8 +303,8 @@ const ContactPage = () => {
               {/* Form Header */}
               <div className="bg-primary-dark text-white p-8">
                 <h2 className="text-2xl font-bold mb-2">{language === "ro" ? "Trimite-ne un mesaj" : "Send us a message"}</h2>
-                <div className="w-20 h-0.5 bg-secondary/70 mb-4"></div>
-                <p className="text-gray-300">{language === "ro" ? "Completează formularul de mai jos și te vom contacta în cel mai scurt timp" : "Fill out the form below and we'll get back to you as soon as possible"}</p>
+                <div className="w-20 h-0.5 bg-secondary mb-4"></div>
+                <p className="text-white text-opacity-90">{language === "ro" ? "Completează formularul de mai jos și te vom contacta în cel mai scurt timp" : "Fill out the form below and we'll get back to you as soon as possible"}</p>
               </div>
               
               {/* Form Content */}
@@ -318,7 +332,7 @@ const ContactPage = () => {
                           value={formData.name}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-gray-900"
                           placeholder={t.form.namePlaceholder}
                         />
                       </div>
@@ -335,7 +349,7 @@ const ContactPage = () => {
                           value={formData.email}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-gray-900"
                           placeholder={t.form.emailPlaceholder}
                         />
                       </div>
@@ -353,7 +367,7 @@ const ContactPage = () => {
                           name="phone"
                           value={formData.phone}
                           onChange={handleChange}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-gray-900"
                           placeholder={t.form.phonePlaceholder}
                         />
                       </div>
@@ -369,7 +383,7 @@ const ContactPage = () => {
                           value={formData.subject}
                           onChange={handleChange}
                           required
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-gray-900"
                         >
                           {t.form.subjectOptions.map((option, index) => (
                             <option key={index} value={index === 0 ? "" : option} disabled={index === 0}>
@@ -392,7 +406,7 @@ const ContactPage = () => {
                         onChange={handleChange}
                         required
                         rows={6}
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all"
+                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent transition-all text-gray-900"
                         placeholder={t.form.messagePlaceholder}
                       ></textarea>
                     </div>
