@@ -13,6 +13,7 @@
     "test:api": "jest --testPathPattern=api"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.27.8",
     "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-accordion": "1.2.2",
     "@radix-ui/react-alert-dialog": "1.1.4",
@@ -52,9 +53,9 @@
     "next": "15.2.4",
     "next-themes": "^0.4.4",
     "nodemailer": "^7.0.3",
-    "react": "^19",
-    "react-day-picker": "8.10.1",
-    "react-dom": "^19",
+    "react": "19.1.0",
+    "react-day-picker": "^9.7.0",
+    "react-dom": "19.1.0",
     "react-hook-form": "^7.54.1",
     "react-resizable-panels": "^2.1.7",
     "recharts": "2.15.0",
