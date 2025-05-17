@@ -7,13 +7,18 @@ on:
     branches: [ main ]
 
 jobs:
+# ------------------------------------------------------------------
+# 1️⃣  BUILD & TEST
+# ------------------------------------------------------------------
   build-and-test:
     runs-on: ubuntu-latest
 
+    # 👉 plain env block – no JS-style “||”
     env:
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
-      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }}
+      # leave blank if the secret is missing; code can fall back at runtime
+      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
 
     steps:
       - name: Checkout code
@@ -22,18 +27,22 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
+      # optional – keep if you really have these tests
       - name: Run email template tests
         run: npm test -- __tests__/api/email-delivery.test.js
 
       - name: Build Next.js application
         run: npm run build
 
+# ------------------------------------------------------------------
+# 2️⃣  DEPLOY (only on pushes to main)
+# ------------------------------------------------------------------
   deploy:
     needs: build-and-test
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -42,7 +51,7 @@ jobs:
     env:
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
-      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }}
+      NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
 
     steps:
       - name: Checkout code
@@ -51,26 +60,26 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: 20
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
 
-      # Deploy directly to Vercel
+      # -----------------------------------------
+      # Deploy to Vercel – pass envs explicitly
+      # -----------------------------------------
       - name: Deploy to Vercel
         uses: vercel/actions/cli@master
         env:
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_TOKEN:      ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID:     ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          # Pass build-time environment variables to Vercel
-          RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-          EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
-          NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }}
         with:
-          vercel-args: '--prod'
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: >
+            --prod
+            --confirm
+            --env RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}
+            --env EMAIL_RECIPIENT=${{ secrets.EMAIL_RECIPIENT }}
+            --env NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }}
           working-directory: ./
