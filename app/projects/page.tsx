@@ -1,134 +1,19 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import Image from "next/image"
 import Link from "next/link"
 import { ArrowRight, Calendar, MapPin, Search } from "lucide-react"
 import { Button } from "@/components/ui/button"
-
-const projectsData = {
-  ro: [
-    {
-      id: "cartografiere-aeriana-valea-muresului",
-      title: "Cartografiere Aeriană - Valea Mureșului",
-      description: "Cartografiere cu dronă și procesare date LiDAR pentru monitorizarea zonei de protecție.",
-      image: "/hero1.jpeg",
-      category: "Fotogrammetrie",
-      date: "Martie 2023",
-      location: "Valea Mureșului, România",
-    },
-    {
-      id: "plan-urbanistic-zonal-timisoara-nord",
-      title: "Plan Urbanistic Zonal - Timișoara Nord",
-      description: "Dezvoltare PUZ pentru o nouă zonă rezidențială cu spații verzi integrate.",
-      image: "/hero2.jpeg",
-      category: "Urbanism",
-      date: "Iunie 2023",
-      location: "Timișoara, România",
-    },
-    {
-      id: "ridicari-topografice-autostrada-a1",
-      title: "Ridicări Topografice - Autostrada A1",
-      description: "Măsurători de precizie pentru extinderea infrastructurii rutiere naționale.",
-      image: "/hero3.jpeg",
-      category: "Topografie",
-      date: "Septembrie 2023",
-      location: "Autostrada A1, România",
-    },
-    {
-      id: "cadastru-terenuri-agricole-timis",
-      title: "Cadastru Terenuri Agricole - Timiș",
-      description: "Intabulare și dezmembrare terenuri agricole în județul Timiș.",
-      image: "/hero1.jpeg",
-      category: "Cadastru",
-      date: "Ianuarie 2023",
-      location: "Județul Timiș, România",
-    },
-    {
-      id: "plan-urbanistic-general-arad",
-      title: "Plan Urbanistic General - Arad",
-      description: "Actualizare PUG pentru municipiul Arad conform noilor reglementări urbanistice.",
-      image: "/hero2.jpeg",
-      category: "Urbanism",
-      date: "Februarie 2023",
-      location: "Arad, România",
-    },
-    {
-      id: "monitorizare-alunecari-teren-caras-severin",
-      title: "Monitorizare Alunecări Teren - Caraș-Severin",
-      description: "Monitorizare topografică a zonelor cu risc de alunecări de teren din județul Caraș-Severin.",
-      image: "/hero3.jpeg",
-      category: "Topografie",
-      date: "Aprilie 2023",
-      location: "Județul Caraș-Severin, România",
-    },
-  ],
-  en: [
-    {
-      id: "aerial-mapping-mures-valley",
-      title: "Aerial Mapping - Mureș Valley",
-      description: "Drone mapping and LiDAR data processing for protection zone monitoring.",
-      image: "/hero1.jpeg",
-      category: "Photogrammetry",
-      date: "March 2023",
-      location: "Mureș Valley, Romania",
-    },
-    {
-      id: "zonal-urban-plan-timisoara-north",
-      title: "Zonal Urban Plan - Timișoara North",
-      description: "PUZ development for a new residential area with integrated green spaces.",
-      image: "/hero2.jpeg",
-      category: "Urban Planning",
-      date: "June 2023",
-      location: "Timișoara, Romania",
-    },
-    {
-      id: "topographic-surveys-a1-highway",
-      title: "Topographic Surveys - A1 Highway",
-      description: "Precision measurements for national road infrastructure expansion.",
-      image: "/hero3.jpeg",
-      category: "Topography",
-      date: "September 2023",
-      location: "A1 Highway, Romania",
-    },
-    {
-      id: "cadastre-agricultural-lands-timis",
-      title: "Cadastre Agricultural Lands - Timiș",
-      description: "Land registration and division of agricultural lands in Timiș county.",
-      image: "/hero1.jpeg",
-      category: "Cadastre",
-      date: "January 2023",
-      location: "Timiș County, Romania",
-    },
-    {
-      id: "general-urban-plan-arad",
-      title: "General Urban Plan - Arad",
-      description: "PUG update for Arad municipality according to new urban planning regulations.",
-      image: "/hero2.jpeg",
-      category: "Urban Planning",
-      date: "February 2023",
-      location: "Arad, Romania",
-    },
-    {
-      id: "landslide-monitoring-caras-severin",
-      title: "Landslide Monitoring - Caraș-Severin",
-      description: "Topographic monitoring of landslide risk areas in Caraș-Severin county.",
-      image: "/hero3.jpeg",
-      category: "Topography",
-      date: "April 2023",
-      location: "Caraș-Severin County, Romania",
-    },
-  ],
-}
+import { projectsData } from "@/data/projects"
 
 const ProjectsPage = () => {
-  const [language, setLanguage] = useState("ro")
+  const [language, setLanguage] = useState<string | null>(null)
   const [activeCategory, setActiveCategory] = useState("all")
   const [searchTerm, setSearchTerm] = useState("")
   const [isHovered, setIsHovered] = useState<number | null>(null)
 
   useEffect(() => {
-    // Check for language in localStorage
+    // Get initial language from localStorage
     const storedLanguage = localStorage.getItem("language") || "ro"
     setLanguage(storedLanguage)
 
@@ -143,12 +28,22 @@ const ProjectsPage = () => {
     }
   }, [])
 
+  // Don't render content until language is loaded
+  if (!language) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-secondary border-t-transparent rounded-full animate-spin"></div>
+        </div>
+      </div>
+    )
+  }
+
   const categories = [
     { id: "all", name: { ro: "Toate", en: "All" } },
-    { id: "Fotogrammetrie", name: { ro: "Fotogrammetrie", en: "Photogrammetry" } },
-    { id: "Urbanism", name: { ro: "Urbanism", en: "Urban Planning" } },
-    { id: "Topografie", name: { ro: "Topografie", en: "Topography" } },
-    { id: "Cadastru", name: { ro: "Cadastru", en: "Cadastre" } },
+    { id: "Cadastru și Topografie", name: { ro: "Cadastru și Topografie", en: "Cadastre and Topography" } },
+    { id: "GIS & Mobile Mapping", name: { ro: "GIS & Mobile Mapping", en: "GIS & Mobile Mapping" } },
+    { id: "Arhitectură și Urbanism", name: { ro: "Arhitectură și Urbanism", en: "Architecture and Urban Planning" } },
   ]
 
   const filteredProjects = projectsData[language as keyof typeof projectsData]
@@ -181,8 +76,6 @@ const ProjectsPage = () => {
 
       {/* Main Content */}
       <div className="container mx-auto px-6 md:px-8 py-16">
-
-
         {/* Search and Filter */}
         <div className="mb-12 bg-white rounded-xl shadow-lg p-6">
           <div className="flex flex-col md:flex-row gap-6 justify-between items-center">
@@ -227,23 +120,11 @@ const ProjectsPage = () => {
               onMouseLeave={() => setIsHovered(null)}
             >
               <Link href={`/projects/${project.id}`}>
-                <div className="relative h-60 overflow-hidden">
-                  <Image
-                    src={project.image || "/placeholder.svg"}
-                    alt={project.title}
-                    fill
-                    className={`object-cover transition-transform duration-700 ${isHovered === index ? "scale-110" : "scale-100"}`}
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    quality={85}
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
-                  <div className="absolute bottom-4 left-4">
-                    <span className="inline-block px-3 py-1 text-xs font-semibold text-white bg-secondary rounded-full mb-2">
-                      {project.category}
-                    </span>
-                  </div>
-                </div>
                 <div className="p-8">
+                  <span className="inline-block px-3 py-1 text-xs font-semibold text-secondary bg-secondary/10 rounded-full mb-4">
+                    {project.category}
+                  </span>
+                  
                   <h3 className="text-xl font-semibold text-primary-dark mb-3 group-hover:text-secondary transition-colors duration-300">
                     {project.title}
                   </h3>
@@ -284,8 +165,8 @@ const ProjectsPage = () => {
               </p>
               <Button
                 onClick={() => {
-                  setSearchTerm('');
-                  setActiveCategory('all');
+                  setSearchTerm("");
+                  setActiveCategory("all");
                 }}
                 className="mt-8 bg-secondary hover:bg-secondary-light text-white px-6 py-3 rounded-md font-medium transition-all duration-300 flex items-center shadow-md hover:shadow-lg"
               >
