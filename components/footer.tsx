@@ -5,12 +5,30 @@ import Image from "next/image"
 import Link from "next/link"
 import { MapPin, Phone, Mail, Clock, Globe } from "lucide-react"
 
+type LinkType = {
+  name: string
+  href: string
+}
+
+type SectionType = {
+  title: string
+  links: LinkType[]
+}
+
+type FooterLinksType = {
+  company: SectionType
+  services: SectionType
+  legal: SectionType
+}
+
+type LanguageType = "ro" | "en"
+
 const Footer = () => {
-  const [language, setLanguage] = useState("ro")
+  const [language, setLanguage] = useState<LanguageType>("ro")
 
   useEffect(() => {
     // Check for language in localStorage or other state management
-    const storedLanguage = localStorage.getItem("language") || "ro"
+    const storedLanguage = (localStorage.getItem("language") || "ro") as LanguageType
     setLanguage(storedLanguage)
   }, [])
 
@@ -24,7 +42,7 @@ const Footer = () => {
     website: "www.procad.ro",
   }
 
-  const footerLinks = {
+  const footerLinks: Record<LanguageType, FooterLinksType> = {
     ro: {
       company: {
         title: "Companie",

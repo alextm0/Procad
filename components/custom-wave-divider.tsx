@@ -1,6 +1,13 @@
-export default function CustomWaveDivider({ className = "" }: { className?: string }) {
+export default function CustomWaveDivider({ 
+  className = "",
+  position = "bottom"
+}: { 
+  className?: string
+  position?: "top" | "bottom"
+}) {
+  const isTop = position === "top"
   return (
-    <div className={`w-full overflow-hidden ${className}`}>
+    <div className={`w-full overflow-hidden ${className} ${isTop ? "rotate-180" : ""}`}>
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" preserveAspectRatio="none" className="w-full h-20">
         <path
           d="M0,80 C240,120 480,40 720,60 C960,80 1200,120 1440,80 L1440,120 L0,120 Z"

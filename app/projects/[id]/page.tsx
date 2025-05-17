@@ -7,17 +7,29 @@ import { Button } from "@/components/ui/button"
 import { useParams } from "next/navigation"
 import { projectsData } from "@/data/projects"
 
+type ProjectType = {
+  id: string
+  title: string
+  description: string
+  fullDescription?: string[]
+  results?: string[]
+  image: string
+  category: string
+  date: string
+  location: string
+}
+
 const ProjectDetailPage = () => {
-  const [language, setLanguage] = useState<string | null>(null)
+  const [language, setLanguage] = useState<"ro" | "en" | null>(null)
   const params = useParams()
   const projectId = params.id as string
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("language") || "ro"
+    const storedLanguage = (localStorage.getItem("language") || "ro") as "ro" | "en"
     setLanguage(storedLanguage)
 
     const handleLanguageChange = () => {
-      setLanguage(localStorage.getItem("language") || "ro")
+      setLanguage((localStorage.getItem("language") || "ro") as "ro" | "en")
     }
     window.addEventListener("languageChange", handleLanguageChange)
 
@@ -37,7 +49,7 @@ const ProjectDetailPage = () => {
     )
   }
 
-  const project = projectsData[language as keyof typeof projectsData].find((p: any) => p.id === projectId)
+  const project = projectsData[language].find((p: ProjectType) => p.id === projectId)
 
   if (!project) {
     return (
@@ -169,10 +181,10 @@ const ProjectDetailPage = () => {
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {projectsData[language as keyof typeof projectsData]
-              .filter((p: any) => p.category === project.category && p.id !== project.id)
+            {projectsData[language]
+              .filter((p: ProjectType) => p.category === project.category && p.id !== project.id)
               .slice(0, 3)
-              .map((relatedProject: any, index: number) => (
+              .map((relatedProject: ProjectType, index: number) => (
                 <div
                   key={index}
                   className="bg-white rounded-xl overflow-hidden shadow-xl border border-gray-100 group hover:shadow-2xl transition-all duration-300 hover:translate-y-[-5px]"

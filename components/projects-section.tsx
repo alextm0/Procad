@@ -1,30 +1,43 @@
 "use client"
 
 import { useState, useEffect } from "react"
+import Link from "next/link"
 import { ArrowRight, Calendar, MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import CustomWaveDivider from "./custom-wave-divider"
 import { projectsData } from "@/data/projects"
 
-const categories = [
-  { id: "all", name: { ro: "Toate", en: "All" } },
-  { id: "Cadastru și Topografie", name: { ro: "Cadastru și Topografie", en: "Cadastre and Topography" } },
-  { id: "GIS & Mobile Mapping", name: { ro: "GIS & Mobile Mapping", en: "GIS & Mobile Mapping" } },
-  { id: "Arhitectură și Urbanism", name: { ro: "Arhitectură și Urbanism", en: "Architecture and Urban Planning" } },
-]
+type ProjectType = {
+  id: string
+  title: string
+  description: string
+  fullDescription?: string[]
+  results?: string[]
+  image: string
+  category: string
+  date: string
+  location: string
+}
+
+type CategoryType = {
+  id: string
+  name: {
+    ro: string
+    en: string
+  }
+}
 
 const ProjectsSection = () => {
-  const [language, setLanguage] = useState("ro")
+  const [language, setLanguage] = useState<"ro" | "en" | null>(null)
   const [activeCategory, setActiveCategory] = useState("all")
   const [isHovered, setIsHovered] = useState<number | null>(null)
 
   useEffect(() => {
-    const storedLanguage = localStorage.getItem("language") || "ro"
+    const storedLanguage = (localStorage.getItem("language") || "ro") as "ro" | "en"
     setLanguage(storedLanguage)
 
     const handleLanguageChange = () => {
-      setLanguage(localStorage.getItem("language") || "ro")
+      setLanguage((localStorage.getItem("language") || "ro") as "ro" | "en")
     }
     window.addEventListener("languageChange", handleLanguageChange)
 
@@ -33,13 +46,23 @@ const ProjectsSection = () => {
     }
   }, [])
 
-  // Get first 6 projects for the homepage
-  const filteredProjects =
-    activeCategory === "all"
-      ? projectsData[language as keyof typeof projectsData].slice(0, 6)
-      : projectsData[language as keyof typeof projectsData]
-          .filter((project: any) => project.category === activeCategory)
-          .slice(0, 6)
+  // Don't render content until language is loaded
+  if (!language) {
+    return null
+  }
+
+  const categories: CategoryType[] = [
+    { id: "all", name: { ro: "Toate", en: "All" } },
+    { id: "Cadastru și Topografie", name: { ro: "Cadastru și Topografie", en: "Cadastre and Topography" } },
+    { id: "GIS & Mobile Mapping", name: { ro: "GIS & Mobile Mapping", en: "GIS & Mobile Mapping" } },
+    { id: "Arhitectură și Urbanism", name: { ro: "Arhitectură și Urbanism", en: "Architecture and Urban Planning" } },
+    { id: "Proiectare", name: { ro: "Proiectare", en: "Design" } },
+    { id: "Arhivare Electronică", name: { ro: "Arhivare Electronică", en: "Electronic Archiving" } }
+  ]
+
+  const filteredProjects = projectsData[language]
+    .filter((project: ProjectType) => activeCategory === "all" || project.category === activeCategory)
+    .slice(0, 6)
 
   return (
     <section id="projects" className="relative py-24 bg-primary-dark text-white">
@@ -68,14 +91,14 @@ const ProjectsSection = () => {
                   : "bg-white/10 backdrop-blur-sm text-white hover:bg-white/20"
               }`}
             >
-              {category.name[language as keyof typeof category.name]}
+              {category.name[language]}
             </button>
           ))}
         </div>
 
         {/* Projects Grid */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {filteredProjects.map((project: any, index: number) => (
+          {filteredProjects.map((project: ProjectType, index: number) => (
             <div
               key={index}
               className="project-card bg-white/5 backdrop-blur-sm rounded-lg overflow-hidden shadow-lg border border-white/10 group"
@@ -114,19 +137,17 @@ const ProjectsSection = () => {
         </div>
 
         {/* View All Projects Button */}
-        <div className="text-center mt-12">
-          <Button
-            asChild
-            className="bg-secondary hover:bg-secondary-light text-white px-6 py-3 rounded-md font-medium transition-all duration-300"
-          >
+        <div className="text-center mt-16">
+          <Button asChild variant="outline" className="border-white text-white hover:bg-white/10">
             <Link href="/projects">
               {language === "ro" ? "Vezi toate proiectele" : "View all projects"}
-              <ArrowRight className="ml-2 h-5 w-5" />
+              <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
         </div>
       </div>
-      <CustomWaveDivider className="absolute bottom-0 left-0 right-0" />
+
+      <CustomWaveDivider position="bottom" />
     </section>
   )
 }
