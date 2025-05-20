@@ -13,11 +13,9 @@ jobs:
   build-and-test:
     runs-on: ubuntu-latest
 
-    # 👉 plain env block – no JS-style “||”
     env:
       RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
       EMAIL_RECIPIENT: ${{ secrets.EMAIL_RECIPIENT }}
-      # leave blank if the secret is missing; code can fall back at runtime
       NEXT_PUBLIC_BASE_URL: ${{ secrets.NEXT_PUBLIC_BASE_URL }}
 
     steps:
@@ -33,7 +31,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      # optional – keep if you really have these tests
+      # Create .env.local for build
+      - name: Create .env.local
+        run: |
+          echo "RESEND_API_KEY=${{ secrets.RESEND_API_KEY }}" >> .env.local
+          echo "EMAIL_RECIPIENT=${{ secrets.EMAIL_RECIPIENT }}" >> .env.local
+          echo "NEXT_PUBLIC_BASE_URL=${{ secrets.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000' }}" >> .env.local
+
       - name: Run email template tests
         run: npm test -- __tests__/api/email-delivery.test.js
 
