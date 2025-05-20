@@ -61,20 +61,30 @@ const ProjectsPage = () => {
 
   const categories: CategoryType[] = [
     { id: "all", name: { ro: "Toate", en: "All" } },
-    { id: "Cadastru și Topografie", name: { ro: "Cadastru și Topografie", en: "Cadastre and Topography" } },
+    { id: "Cadastre and Topography", name: { ro: "Cadastru și Topografie", en: "Cadastre and Topography" } },
     { id: "GIS & Mobile Mapping", name: { ro: "GIS & Mobile Mapping", en: "GIS & Mobile Mapping" } },
-    { id: "Arhitectură și Urbanism", name: { ro: "Arhitectură și Urbanism", en: "Architecture and Urban Planning" } },
-    { id: "Proiectare", name: { ro: "Proiectare", en: "Design" } },
-    { id: "Arhivare Electronică", name: { ro: "Arhivare Electronică", en: "Electronic Archiving" } }
+    { id: "Architecture and Urban Planning", name: { ro: "Arhitectură și Urbanism", en: "Architecture and Urban Planning" } },
+    { id: "Design", name: { ro: "Proiectare", en: "Design" } },
+    { id: "Electronic Archiving", name: { ro: "Arhivare Electronică", en: "Electronic Archiving" } }
   ]
 
   const filteredProjects = projectsData[language]
     .filter((project: ProjectType) => {
-      const matchesCategory = activeCategory === "all" || project.category === activeCategory
+      if (activeCategory === "all") return true
+      const cat = categories.find(c => c.id === activeCategory)
+      if (!cat) return false
+      // Match project.category against both EN and RO names
+      return (
+        project.category === cat.id ||
+        project.category === cat.name.ro ||
+        project.category === cat.name.en
+      )
+    })
+    .filter((project: ProjectType) => {
       const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                          project.category.toLowerCase().includes(searchTerm.toLowerCase())
-      return matchesCategory && matchesSearch
+        project.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        project.category.toLowerCase().includes(searchTerm.toLowerCase())
+      return matchesSearch
     })
 
   return (
@@ -104,7 +114,7 @@ const ProjectsPage = () => {
                 placeholder={language === "ro" ? "Caută proiecte..." : "Search projects..."}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent shadow-sm transition-all duration-300"
+                className="w-full px-4 py-3 pl-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-secondary focus:border-transparent shadow-sm transition-all duration-300 text-gray-900 placeholder-gray-500"
               />
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
             </div>

@@ -37,8 +37,15 @@ const Header = () => {
     setLanguage(storedLanguage)
   }, [])
 
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [pathname])
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
+    // Prevent background scrolling when menu is open
+    document.body.style.overflow = !isMenuOpen ? 'hidden' : ''
   }
 
   const toggleLanguage = () => {
@@ -138,13 +145,21 @@ const Header = () => {
 
         {/* Mobile Navigation */}
         {isMenuOpen && (
-          <div className="fixed inset-0 bg-primary-dark bg-opacity-95 flex flex-col items-center justify-center md:hidden z-40">
-            <nav className="flex flex-col items-center space-y-8">
+          <div className="fixed inset-0 bg-primary-dark bg-opacity-95 flex flex-col items-center justify-center md:hidden z-50" style={{top:0, left:0, width:'100vw', height:'100vh'}}>
+            {/* Close Button */}
+            <button 
+              onClick={toggleMenu}
+              className="absolute top-6 right-6 text-white hover:text-secondary transition-colors"
+              aria-label="Close menu"
+            >
+              <X className="h-6 w-6" />
+            </button>
+            <nav className="flex flex-col items-center space-y-10">
               {navItems.map((item) => (
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-white text-lg font-medium hover:text-secondary"
+                  className="text-white text-xl font-medium hover:text-secondary py-2"
                   onClick={toggleMenu}
                 >
                   {item.name}
@@ -155,9 +170,9 @@ const Header = () => {
                   toggleLanguage()
                   toggleMenu()
                 }}
-                className="flex items-center text-white text-lg font-medium hover:text-secondary"
+                className="flex items-center text-white text-xl font-medium hover:text-secondary py-2"
               >
-                <Globe className="h-5 w-5 mr-2" />
+                <Globe className="h-6 w-6 mr-2" />
                 {language === "ro" ? "EN" : "RO"}
               </button>
             </nav>
